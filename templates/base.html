@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Good Planner{% endblock %}</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  body{font-family:"IBM Plex Sans Thai",system-ui,sans-serif;background:#EFEEE9;color:#191C2B}
+  .brand{font-family:"Chakra Petch",sans-serif;font-weight:700}
+</style>
+{% block extra_head %}{% endblock %}
+</head>
+<body class="min-h-screen">
+<div class="max-w-4xl mx-auto px-4 pb-16">
+
+  <header class="flex items-center gap-4 py-5 border-b border-slate-300 mb-6">
+    <a href="{% url 'tasks:calendar' %}" class="brand text-2xl">
+      Good<span class="text-emerald-600">Planner</span>
+    </a>
+    <span class="flex-1"></span>
+    {% if user.is_authenticated %}
+      <nav class="flex items-center gap-3 text-sm">
+        <a href="{% url 'tasks:calendar' %}" class="hover:text-emerald-600">ปฏิทิน</a>
+        <a href="{% url 'tasks:today' %}" class="hover:text-emerald-600">วันนี้</a>
+        <a href="{% url 'tasks:list' %}" class="hover:text-emerald-600">งานทั้งหมด</a>
+        <a href="{% url 'accounts:profile' %}" class="hover:text-emerald-600">{{ user.first_name|default:user.email }}</a>
+        <form action="{% url 'accounts:logout' %}" method="post" class="inline">
+          {% csrf_token %}
+          <button type="submit" class="px-3 py-1.5 border border-slate-800 rounded text-slate-800 hover:bg-slate-800 hover:text-white transition">
+            ออกจากระบบ
+          </button>
+        </form>
+      </nav>
+    {% endif %}
+  </header>
+
+  {% if messages %}
+    <div class="mb-5 space-y-2">
+      {% for message in messages %}
+        <div class="text-sm px-4 py-2 rounded border
+          {% if message.tags == 'success' %}border-emerald-600 bg-emerald-50 text-emerald-800
+          {% elif message.tags == 'error' %}border-red-600 bg-red-50 text-red-800
+          {% else %}border-slate-300 bg-slate-50 text-slate-700{% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {% block content %}{% endblock %}
+
+</div>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

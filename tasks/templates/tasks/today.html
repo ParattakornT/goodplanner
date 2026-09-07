@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}งานวันนี้ — Good Planner{% endblock %}
+{% block content %}
+<h1 class="text-xl font-semibold brand mb-1">งานวันนี้</h1>
+<p class="text-sm text-slate-500 mb-6">{{ today|date:"j F Y" }}</p>
+
+{% if overdue %}
+<div class="mb-6">
+  <h2 class="text-sm font-semibold text-red-700 mb-2">งานที่เลยกำหนดแล้ว ({{ overdue|length }})</h2>
+  <div class="space-y-2">
+    {% for task in overdue %}
+      {% include "tasks/_task_row.html" with task=task overdue=True %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<h2 class="text-sm font-semibold text-slate-700 mb-2">งานของวันนี้ ({{ tasks|length }})</h2>
+{% if tasks %}
+  <div class="space-y-2">
+    {% for task in tasks %}
+      {% include "tasks/_task_row.html" with task=task %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-sm text-slate-500 border border-dashed border-slate-300 rounded-lg p-8 text-center">
+    วันนี้ยังไม่มีงาน — <a href="{% url 'tasks:create' %}" class="text-emerald-600 font-semibold">เพิ่มงานใหม่</a>
+  </div>
+{% endif %}
+{% endblock %}

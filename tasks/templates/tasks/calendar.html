@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}ปฏิทิน — Good Planner{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-semibold brand">ปฏิทินของฉัน</h1>
+  <a href="{% url 'tasks:create' %}"
+     class="bg-slate-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:opacity-90 transition">
+    + เพิ่มงาน
+  </a>
+</div>
+
+<div class="bg-white border border-slate-200 rounded-lg shadow-sm p-4">
+  <div id="calendar"></div>
+</div>
+
+<div class="flex gap-4 text-xs text-slate-500 mt-4">
+  <span class="flex items-center gap-1"><i class="w-2.5 h-2.5 rounded-sm inline-block" style="background:#DB5344"></i> สำคัญสูง</span>
+  <span class="flex items-center gap-1"><i class="w-2.5 h-2.5 rounded-sm inline-block" style="background:#E8B221"></i> ปานกลาง</span>
+  <span class="flex items-center gap-1"><i class="w-2.5 h-2.5 rounded-sm inline-block" style="background:#8A93A6"></i> ต่ำ</span>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const calendarEl = document.getElementById("calendar");
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: "dayGridMonth",
+      locale: "th",
+      firstDay: 0,
+      headerToolbar: {
+        left: "prev,next today",
+        center: "title",
+        right: "dayGridMonth,timeGridWeek",
+      },
+      buttonText: { today: "วันนี้", month: "เดือน", week: "สัปดาห์" },
+      height: "auto",
+      events: "{% url 'tasks:calendar_events' %}",
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}

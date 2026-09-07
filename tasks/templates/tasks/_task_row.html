@@ -1,0 +1,25 @@
+{% load static %}
+<div class="flex items-start gap-3 border rounded-md px-4 py-3 bg-white
+  {% if overdue %}border-red-300 bg-red-50{% else %}border-slate-200{% endif %}">
+  <button
+    type="button"
+    class="mt-0.5 w-4 h-4 rounded border border-slate-400 flex-none {% if task.is_done %}bg-emerald-600 border-emerald-600{% endif %}"
+    onclick="fetch('{% url 'tasks:toggle' task.pk %}', {method:'POST', headers:{'X-CSRFToken':'{{ csrf_token }}','X-Requested-With':'XMLHttpRequest'}}).then(()=>location.reload());"
+    aria-label="ทำเสร็จแล้ว">
+  </button>
+  <a href="{% url 'tasks:detail' task.pk %}" class="flex-1">
+    <span class="block text-sm font-medium {% if task.is_done %}line-through text-slate-400{% endif %}">
+      {{ task.title }}
+    </span>
+    <span class="block text-xs text-slate-500 mt-0.5">
+      {{ task.date }} · {{ task.start_time|time:"H:i" }}–{{ task.end_time|time:"H:i" }}
+      {% if overdue %}<span class="text-red-600 font-semibold">· เลยกำหนด</span>{% endif %}
+    </span>
+  </a>
+  <span class="text-[10px] px-2 py-0.5 rounded-full
+    {% if task.priority == 'high' %}bg-red-100 text-red-800
+    {% elif task.priority == 'mid' %}bg-amber-100 text-amber-800
+    {% else %}bg-slate-100 text-slate-600{% endif %}">
+    {{ task.get_priority_display }}
+  </span>
+</div>

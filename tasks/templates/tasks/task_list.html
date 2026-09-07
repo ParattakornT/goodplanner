@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}งานทั้งหมด — Good Planner{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-4">
+  <h1 class="text-xl font-semibold brand">งานทั้งหมดของฉัน</h1>
+  <a href="{% url 'tasks:create' %}"
+     class="bg-slate-900 text-white text-sm font-semibold px-4 py-2 rounded-md hover:opacity-90 transition">
+    + เพิ่มงาน
+  </a>
+</div>
+
+{% if tasks %}
+  <div class="space-y-2">
+    {% for task in tasks %}
+      {% include "tasks/_task_row.html" with task=task %}
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-sm text-slate-500 border border-dashed border-slate-300 rounded-lg p-8 text-center">
+    ยังไม่มีงานเลย — <a href="{% url 'tasks:create' %}" class="text-emerald-600 font-semibold">เพิ่มงานแรก</a>
+  </div>
+{% endif %}
+{% endblock %}
