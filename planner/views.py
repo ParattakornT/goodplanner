@@ -406,7 +406,12 @@ def cron_reminders(request):
     supplied = request.headers.get('Authorization', '').removeprefix('Bearer ')
     if not settings.CRON_SECRET or not hmac.compare_digest(supplied.encode(), settings.CRON_SECRET.encode()):
         return error(403, 'forbidden')
-    return JsonResponse({'digest': mailer.send_digests(), 'dueSoon': mailer.send_due_soon()})
+    mailer.last_error = ''
+    result = {'digest': mailer.send_digests(), 'dueSoon': mailer.send_due_soon(),
+              'gmailConnected': MailSender.objects.filter(pk=1).exclude(refresh_token='').exists()}
+    if mailer.last_error:
+        result['error'] = mailer.last_error
+    return JsonResponse(result)
 
 
 @api(['GET', 'POST'], authenticated=True)

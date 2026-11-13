@@ -98,7 +98,7 @@ class ReminderTests(TestCase):
         self.assertEqual(client.post('/api/cron/reminders', HTTP_AUTHORIZATION='Bearer wrong').status_code, 403)
         response = client.post('/api/cron/reminders', HTTP_AUTHORIZATION='Bearer s3cret')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(set(response.json()), {'digest', 'dueSoon'})
+        self.assertEqual(set(response.json()), {'digest', 'dueSoon', 'gmailConnected'})
 
     def test_gmail_api_used_when_sender_connected(self):
         MailSender.objects.create(pk=1, email='sender@gmail.com', refresh_token='refresh')

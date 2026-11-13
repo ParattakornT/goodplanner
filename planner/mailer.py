@@ -33,6 +33,11 @@ class MailError(Exception):
     pass
 
 
+# Short description of the latest failure, reported by the cron endpoint
+# (never contains tokens or recipient addresses).
+last_error = ''
+
+
 def _post(url, data, headers):
     request = Request(url, data=data, headers=headers)
     try:
@@ -70,7 +75,9 @@ def deliver(to, subject, body):
             if settings.REQUIRE_GMAIL:
                 # On the public site an unconnected sender is a failure, so the
                 # reminder stays unsent and goes out once Gmail is connected.
-                logger.warning('Email to %s skipped: no Gmail account connected (open /auth/gmail)', to)
+                global last_error
+                last_error = 'no Gmail account connected (open /auth/gmail)'
+                logger.warning('Email to %s skipped: %s', to, last_error)
                 return False
             send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [to])
             return True
@@ -85,7 +92,9 @@ def deliver(to, subject, body):
             'Content-Type': 'application/json',
         })
         return True
-    except Exception:  # A failed email must never break the request that caused it.
+    except Exception as exc:  # A failed email must never break the request that caused it.
+        global last_error
+        last_error = str(exc)[:300]
         logger.exception('Email to %s failed', to)
         return False
 
