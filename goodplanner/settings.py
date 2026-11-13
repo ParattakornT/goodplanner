@@ -114,6 +114,8 @@ CRON_SECRET = os.environ.get('CRON_SECRET', '')
 EMAIL_BACKEND = os.environ.get('DJANGO_EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
 DEFAULT_FROM_EMAIL = 'Good Planner <noreply@localhost>'
 EMAIL_ASYNC = True
+# On Render, never fall back to the console: unsent reminders are retried instead.
+REQUIRE_GMAIL = bool(RENDER_HOST)
 LOGGING = {'version': 1, 'disable_existing_loggers': False,
            'handlers': {'console': {'class': 'logging.StreamHandler'}},
            'root': {'handlers': ['console'], 'level': 'WARNING'},

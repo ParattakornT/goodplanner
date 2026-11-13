@@ -115,6 +115,18 @@ class ReminderTests(TestCase):
         with patch.object(mailer, '_post', side_effect=mailer.MailError('down')):
             self.assertFalse(mailer.deliver('member@example.com', 'x', 'y'))  # Failure is logged, not raised.
 
+    @override_settings(REQUIRE_GMAIL=True)
+    def test_unconnected_gmail_on_the_public_site_leaves_reminders_for_later(self):
+        Task.objects.create(user=self.member, title='ส่งรายงาน', task_date=self.today, task_time='10:00')
+        self.assertEqual(mailer.send_due_soon(at(self.today, 9)), 0)
+        self.assertEqual(mailer.send_digests(at(self.today, 9)), 0)
+        self.assertEqual(mail.outbox, [])
+        self.assertFalse(EmailLog.objects.exists())  # Nothing marked as sent, so it retries.
+        MailSender.objects.create(pk=1, email='sender@gmail.com', refresh_token='refresh')
+        with patch.object(mailer, '_post', return_value={'access_token': 't', 'id': 'm'}):
+            self.assertEqual(mailer.send_due_soon(at(self.today, 9, 10)), 1)
+            self.assertEqual(mailer.send_digests(at(self.today, 9, 10)), 1)
+
     @override_settings(ADMIN_EMAILS={'member@example.com'})
     def test_admin_emails_are_promoted_on_sign_in_and_others_are_kept_out(self):
         client = Client(enforce_csrf_checks=True)

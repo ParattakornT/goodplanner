@@ -67,6 +67,11 @@ def deliver(to, subject, body):
     sender = MailSender.objects.filter(pk=1).exclude(refresh_token='').first()
     try:
         if sender is None:
+            if settings.REQUIRE_GMAIL:
+                # On the public site an unconnected sender is a failure, so the
+                # reminder stays unsent and goes out once Gmail is connected.
+                logger.warning('Email to %s skipped: no Gmail account connected (open /auth/gmail)', to)
+                return False
             send_mail(subject, body, settings.DEFAULT_FROM_EMAIL, [to])
             return True
         message = EmailMessage()
@@ -148,6 +153,10 @@ def digest_for(user, today):
     return subject, '\n'.join(parts)
 
 
+def _release(user, kind, key):
+    EmailLog.objects.filter(user=user, kind=kind, key=key).delete()
+
+
 def send_digests(now=None):
     now = timezone.localtime(now)
     if now.hour < DIGEST_HOUR:
@@ -155,8 +164,12 @@ def send_digests(now=None):
     sent = 0
     for user in User.objects.filter(is_active=True, email_reminders=True):
         content = digest_for(user, now.date())
-        if content and _claim(user, 'digest', now.date().isoformat()):
-            sent += deliver(user.email, content[0], content[1] + f'\n\nเปิด Good Planner: {site_url("/dashboard.html")}')
+        key = now.date().isoformat()
+        if content and _claim(user, 'digest', key):
+            if deliver(user.email, content[0], content[1] + f'\n\nเปิด Good Planner: {site_url("/dashboard.html")}'):
+                sent += 1
+            else:
+                _release(user, 'digest', key)  # Try again on the next hourly call.
     return sent
 
 
@@ -197,5 +210,8 @@ def send_due_soon(now=None):
     sent = 0
     for user, key, subject, body in items:
         if _claim(user, 'due-soon', key):
-            sent += deliver(user.email, 'Good Planner: ' + subject, f'สวัสดี {user.display_name}\n\n{body}\n\nเปิด Good Planner: {site_url("/dashboard.html")}')
+            if deliver(user.email, 'Good Planner: ' + subject, f'สวัสดี {user.display_name}\n\n{body}\n\nเปิด Good Planner: {site_url("/dashboard.html")}'):
+                sent += 1
+            else:
+                _release(user, 'due-soon', key)
     return sent
