@@ -8,6 +8,7 @@ urlpatterns = [
     path('', views.page, {'name': 'login.html'}),
     path('login.html', views.page, {'name': 'login.html'}),
     path('register.html', views.page, {'name': 'register.html'}),
+    path('privacy.html', views.page, {'name': 'privacy.html'}),
     path('dashboard.html', views.page, {'name': 'dashboard.html'}),
     path('groups.html', views.page, {'name': 'groups.html'}),
     *[path(name, views.asset, {'name': name}) for name in views.ASSETS],

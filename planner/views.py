@@ -25,7 +25,7 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 from . import mailer
 from .models import MailSender, Task, User
 
-ASSETS = {'login.css': 'text/css', 'planner.css': 'text/css', 'workspace.css': 'text/css', 'dashboard.css': 'text/css', 'login.js': 'text/javascript', 'dashboard.js': 'text/javascript', 'groups.css': 'text/css', 'groups.js': 'text/javascript', 'theme-dark.css': 'text/css', 'theme.js': 'text/javascript'}
+ASSETS = {'login.css': 'text/css', 'planner.css': 'text/css', 'workspace.css': 'text/css', 'dashboard.css': 'text/css', 'login.js': 'text/javascript', 'dashboard.js': 'text/javascript', 'groups.css': 'text/css', 'groups.js': 'text/javascript', 'theme-dark.css': 'text/css', 'theme.js': 'text/javascript', 'privacy.css': 'text/css'}
 logger = logging.getLogger(__name__)
 GOOGLE_AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth'
 GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'

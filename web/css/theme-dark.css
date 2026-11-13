@@ -267,7 +267,7 @@
 :root[data-theme="dark"] .you-tag { background:#101621; }
 :root[data-theme="dark"] .status-chip { color:#d5c08e; background:#221d11; }
 :root[data-theme="dark"] .status-chip i { background:#342c1a; }
-:root[data-theme="dark"] .status-chip.ready { color:#a1cfb3; background:#112113; }
+:root[data-theme="dark"] .status-chip.ready { color:#a1cfb3; background:#112112; }
 :root[data-theme="dark"] .status-chip.ready i { background:#4b7455; }
 :root[data-theme="dark"] .step-link { border-bottom:1px solid #131f32; }
 :root[data-theme="dark"] .step-number { background:#101320; }
