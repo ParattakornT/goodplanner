@@ -1,0 +1,17 @@
+<aside class="workspace-sidebar" aria-label="เมนูหลัก">
+  <a class="brand" href="dashboard.html" aria-label="GoodPlanner หน้าหลัก"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="4"/><path d="M8 3v4m8-4v4M4 11h16m-12 5 2 2 5-5"/></svg></span><span class="brand-word">Good<span>Planner</span></span></a>
+  <div class="sidebar-account"><span class="avatar" id="avatar" aria-hidden="true">G</span><div><strong id="account-name">กำลังโหลด…</strong><span>พื้นที่ทำงานของคุณ</span></div></div>
+  <p class="sidebar-label">WORKSPACE</p>
+  <nav class="workspace-nav" aria-label="พื้นที่วางแผน">
+    <a href="dashboard.html" {% if active_page == 'personal' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18m-13 5h2m4 0h2"/></svg>แผนส่วนตัว{% if active_page == 'personal' %}<span class="nav-indicator" aria-hidden="true"></span>{% endif %}</a>
+    <a href="groups.html" {% if active_page == 'groups' %}aria-current="page"{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m3 9v-2a6 6 0 0 0-2-4"/></svg>แผนงานกลุ่ม{% if active_page == 'groups' %}<span class="nav-indicator" aria-hidden="true"></span>{% endif %}</a>
+  </nav>
+  <div class="sidebar-note"><span class="sidebar-note-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5Z"/></svg></span>
+    {% if active_page == 'personal' %}
+    <h2>วันดี ๆ เริ่มจาก<br>แผนเล็ก ๆ ของคุณ</h2><p>จัดเวลาให้สิ่งสำคัญ<br>แล้วค่อย ๆ ทำทีละอย่าง</p><button id="sidebar-new-task" type="button" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>เพิ่มงานใหม่</button>
+    {% else %}
+    <h2>ทุกแผนดีขึ้นได้<br>เมื่อเราวางด้วยกัน</h2><p>ชวนทีมมาแชร์เวลา<br>แล้วเริ่มทำสิ่งดี ๆ ไปด้วยกัน</p><button id="sidebar-create" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>สร้างกลุ่มใหม่</button>
+    {% endif %}
+  </div>
+  <button id="logout" class="sidebar-logout" type="button" {% if active_page == 'personal' %}disabled{% endif %}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v16h5m6-12 4 4-4 4M8 12h11"/></svg>ออกจากระบบ</button>
+</aside>

@@ -1,0 +1,95 @@
+GOOD PLANNER — DEPLOY ขึ้น RENDER + อีเมลแจ้งเตือนผ่าน GMAIL
+=============================================================
+
+ภาพรวม
+------
+  GitHub (โค้ด) ──► Render (เว็บ + ฐานข้อมูล PostgreSQL)
+  GitHub Actions ──(ทุกชั่วโมง)──► https://<เว็บ>/api/cron/reminders ──► Gmail API ──► อีเมลผู้ใช้
+
+  * Render แพ็กเกจฟรีบล็อก SMTP จึงส่งอีเมลผ่าน Gmail API (HTTPS) แทน
+  * ฐานข้อมูลฟรีของ Render หมดอายุ 30 วันหลังสร้าง ถ้าจะใช้ต่อต้องอัปเกรด
+    หรือเปลี่ยน DATABASE_URL ไปใช้ Postgres ฟรีที่อื่น (เช่น Neon)
+  * เว็บฟรีจะหลับเมื่อไม่มีคนใช้ 15 นาที เปิดครั้งแรกรอประมาณ 1 นาที
+
+
+1) GOOGLE CLOUD (ทำครั้งเดียว) — console.cloud.google.com
+------------------------------------------------------------
+  ใช้โปรเจกต์เดียวกับ OAuth Client ที่ใช้ล็อกอิน Google อยู่แล้ว
+  a. APIs & Services > Library > ค้น "Gmail API" > Enable
+  b. APIs & Services > Credentials > OAuth 2.0 Client (Web application)
+     Authorized redirect URIs เพิ่ม 2 รายการ:
+       https://<ชื่อเว็บ>.onrender.com/auth/google/callback
+       https://<ชื่อเว็บ>.onrender.com/auth/gmail/callback
+     (ของเครื่องตัวเองคงไว้: http://localhost:3000/auth/google/callback)
+  c. OAuth consent screen (Google Auth Platform > Audience)
+     กด "Publish app" ให้เป็น In production
+     - ถ้าค้างไว้ที่ Testing ผู้ใช้ที่ไม่ได้อยู่ในรายชื่อ Test users จะล็อกอินไม่ได้
+       และสิทธิ์ส่งอีเมลจะหมดอายุทุก 7 วัน
+     - การล็อกอินใช้แค่ openid/email/profile ไม่ต้องรอ Google ตรวจแอป
+     - ตอนเชื่อม Gmail ผู้ดูแลจะเห็นคำเตือน "Google hasn't verified this app"
+       ให้กด Advanced > Go to ... (unsafe) ได้ เพราะเป็นแอปของเราเอง
+  d. คัดลอก Client secret เก็บไว้ใส่ใน Render (ห้ามใส่ในโค้ด)
+
+
+2) RENDER — dashboard.render.com (สมัครด้วยบัญชี GitHub)
+----------------------------------------------------------
+  New > Blueprint > เลือก repo goodplanner > Render อ่าน render.yaml เอง
+  ระบบจะถามค่าที่เป็นความลับ 3 ตัว:
+     GOOGLE_CLIENT_SECRET = (จากข้อ 1d)
+     ADMIN_EMAILS         = อีเมลผู้ดูแล คั่นด้วย , (เช่น อีเมล Gmail ของคุณ)
+     CRON_SECRET          = ข้อความสุ่มยาว ๆ (ใช้ซ้ำในข้อ 3)
+  กด Apply > รอ Build เสร็จ > ได้ลิงก์ https://<ชื่อเว็บ>.onrender.com
+  ตัวแปรอื่น (SECRET_KEY, DATABASE_URL, ALLOWED_HOSTS) ตั้งให้อัตโนมัติ
+
+
+3) GITHUB — ตั้งเวลาส่งเตือน
+------------------------------
+  repo > Settings > Secrets and variables > Actions > New repository secret
+     SITE_URL    = https://<ชื่อเว็บ>.onrender.com   (ไม่มี / ท้าย)
+     CRON_SECRET = ค่าเดียวกับใน Render
+  ทดสอบ: แท็บ Actions > email-reminders > Run workflow ต้องขึ้นเครื่องหมายถูก
+
+
+4) เปิดใช้อีเมลแจ้งเตือน
+--------------------------
+  a. เข้าเว็บ ล็อกอินด้วย Google ด้วยอีเมลที่อยู่ใน ADMIN_EMAILS
+     (บัญชีนั้นจะกลายเป็นผู้ดูแลอัตโนมัติ และเห็นปุ่ม "ผู้ดูแล" บนหน้าแผนส่วนตัว)
+  b. เปิด https://<ชื่อเว็บ>.onrender.com/auth/gmail
+     เลือกบัญชี Gmail ที่จะใช้ส่ง > ติ๊กอนุญาต "ส่งอีเมลในนามคุณ"
+  c. ระบบส่งอีเมล "เชื่อมต่อ Gmail สำเร็จ" เข้าบัญชีนั้นทันที = พร้อมใช้งาน
+
+
+อีเมลที่ระบบส่ง
+----------------
+  ทันที    : ได้รับมอบหมายงานกลุ่ม, มีนัดหมายใหม่, นัดถูกยกเลิก
+  ทุกเช้า   : สรุปงานที่ต้องส่งวันนี้-พรุ่งนี้, งานที่เลยกำหนดแล้วยังไม่เสร็จ, นัดของวันนี้
+             (ส่งรอบแรกหลัง 06:00 น. วันละครั้งต่อคน)
+  ก่อนกำหนด: งานที่มีเวลาส่ง หรือนัดที่จะเริ่ม ภายใน 2 ชั่วโมง (ครั้งเดียวต่องาน)
+  ผู้ใช้ปิดได้เองที่ปุ่ม "✉ อีเมลเตือน" บนหน้าแผนส่วนตัว
+  หมายเหตุ: GitHub Actions อาจเลื่อนเวลาไปบ้าง 5-30 นาทีในช่วงคนใช้เยอะ
+
+
+ดูข้อมูลในฐานข้อมูล
+--------------------
+  เว็บจริง  : https://<ชื่อเว็บ>.onrender.com/admin/   (ต้องเป็นผู้ดูแล)
+  เครื่องตัวเอง: เปิด start.cmd แล้วไปที่ http://localhost:3000/admin/
+             ผู้ดูแลบนเครื่องตัวเอง: ตั้ง ADMIN_EMAILS ก่อนรัน เช่น
+               set ADMIN_EMAILS=อีเมลของคุณ
+               start.cmd
+             แล้วล็อกอินด้วยอีเมลนั้นหนึ่งครั้ง
+  ไฟล์ฐานข้อมูลบนเครื่อง: data\goodplanner-django.sqlite3
+             (เปิดด้วยโปรแกรม DB Browser for SQLite ได้ ปิดเว็บก่อนแก้ไข)
+  ฐานข้อมูลบน Render: เป็น PostgreSQL ดูผ่าน /admin หรือหน้า Database ใน Render
+
+
+ทดสอบอีเมลบนเครื่องตัวเอง
+---------------------------
+  ถ้ายังไม่เชื่อม Gmail อีเมลจะถูกพิมพ์ออกมาในหน้าต่าง start.cmd แทนการส่งจริง
+  ทดสอบส่งสรุปเช้าทันที:
+     .venv\Scripts\python.exe manage.py shell -c "from planner import mailer; print(mailer.send_digests(), mailer.send_due_soon())"
+
+
+อัปเดตเว็บหลังแก้โค้ด
+----------------------
+  git add . && git commit -m "ข้อความ" && git push
+  Render จะ Build และ Deploy ใหม่ให้อัตโนมัติ

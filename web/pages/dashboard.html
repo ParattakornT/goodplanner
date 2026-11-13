@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b78">
+  <title>แพลนเนอร์ส่วนตัว — GoodPlanner</title>
+  <link rel="stylesheet" href="planner.css">
+  <link rel="stylesheet" href="workspace.css">
+  <link rel="stylesheet" href="dashboard.css">
+  <script src="dashboard.js" defer></script>
+  <link rel="stylesheet" href="theme-dark.css">
+  <script src="theme.js"></script>
+</head>
+<body class="workspace-page personal-page">
+  <div class="planner-app">
+    {% include 'partials/workspace-sidebar.html' with active_page='personal' %}
+    <div class="workspace-main">
+      <header class="topbar"><div class="workspace-location"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 3v4m10-4v4M3 11h18"/></svg><span>พื้นที่ทำงาน</span><span class="location-slash">/</span><strong>แผนส่วนตัว</strong></div><div class="account-area"><span id="workspace-today" class="workspace-today"></span><span class="personal-space-tag"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>พื้นที่ส่วนตัว</span><a id="admin-link" class="quiet-button email-toggle" href="/admin/" hidden>ผู้ดูแล</a><button id="email-toggle" class="quiet-button email-toggle" type="button" aria-pressed="true" hidden title="ส่งสรุปงานทุกเช้า เตือนก่อนถึงกำหนด 2 ชั่วโมง และแจ้งเมื่อได้งานหรือมีนัดใหม่">✉ อีเมลเตือน: เปิด</button><button class="quiet-button theme-toggle" data-theme-toggle type="button" aria-pressed="false" aria-label="เปลี่ยนเป็นโหมดมืด">☾</button></div></header>
+  <main class="planner-shell">
+    <div class="page-heading">
+      <div><p class="eyebrow">MAKE ROOM FOR YOUR DAY</p><h1>วันของคุณ<span>วางแผนได้</span></h1><p class="page-subtitle">เลือกวัน จัดเวลา แล้วค่อย ๆ ทำสิ่งสำคัญให้สำเร็จ</p></div>
+      <button id="new-task" type="button" class="primary-button" disabled><span aria-hidden="true">＋</span> เพิ่มงานใหม่</button>
+    </div>
+    <div id="status" class="status-message" role="status" hidden><span id="status-text"></span><button id="dismiss-status" type="button" aria-label="ปิดข้อความแจ้งผล">×</button></div>
+    <div id="load-error" class="load-error" role="alert" hidden><span id="load-error-text"></span><button id="retry" type="button" class="quiet-button">ลองอีกครั้ง</button></div>
+    <section class="summary-row" aria-label="สรุปงานเดือนที่แสดง">
+      <div class="summary-item"><span class="summary-icon icon-all" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4V2m6 2V2M9 10h6m-6 4h6m-6 4h3"/></svg></span><div class="summary-copy"><p>งานในเดือนนี้</p><strong id="total-count">—</strong><span class="unit">งาน</span></div></div>
+      <div class="summary-item"><span class="summary-icon icon-pending" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><div class="summary-copy"><p>รอทำให้สำเร็จ</p><strong id="pending-count">—</strong><span class="unit">งาน</span></div></div>
+      <div class="summary-item"><span class="summary-icon icon-done" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg></span><div class="summary-copy"><p>เสร็จเรียบร้อย</p><strong id="done-count">—</strong><span class="unit">งาน</span></div></div>
+    </section>
+    <div class="planner-grid">
+      <section class="calendar-panel" aria-labelledby="month-title">
+        <div class="calendar-toolbar"><div><p class="section-kicker">ปฏิทินของฉัน</p><h2 id="month-title"></h2></div><div class="calendar-tools"><div class="date-jump"><label class="sr-only" for="jump-date">ไปวันที่</label><input type="date" id="jump-date" min="1900-01-01" max="2100-12-31" title="ไปวันที่"></div><div class="calendar-controls"><button class="quiet-button" id="go-today" type="button">วันนี้</button><button class="arrow-button" id="previous-month" type="button" aria-label="เดือนก่อนหน้า">‹</button><button class="arrow-button" id="next-month" type="button" aria-label="เดือนถัดไป">›</button></div></div></div>
+        <div class="weekdays" aria-hidden="true"><span>อา.</span><span>จ.</span><span>อ.</span><span>พ.</span><span>พฤ.</span><span>ศ.</span><span>ส.</span></div>
+        <div class="calendar-days" id="calendar-days" aria-label="เลือกวันเพื่อดูงาน"></div>
+        <div class="calendar-footer"><span><i class="legend-today"></i> วันนี้</span><span><i class="legend-selected"></i> วันที่เลือก</span><span class="calendar-hint">เลือกวัน แล้วเริ่มวางแผน</span></div>
+      </section>
+      <section class="agenda-panel" aria-labelledby="selected-date-title">
+        <div class="agenda-heading"><p class="section-kicker">งานของวันที่เลือก</p><h2 id="selected-date-title"></h2><div class="day-progress-copy"><p id="day-summary" class="muted">กำลังโหลดงาน…</p><span id="day-progress-label"></span></div><progress id="day-progress" max="1" value="0" aria-label="ความคืบหน้างานของวันที่เลือก"></progress></div>
+        <div class="task-filters" role="group" aria-label="กรองสถานะงาน"><button data-filter="all" type="button" aria-pressed="true">ทั้งหมด</button><button data-filter="pending" type="button" aria-pressed="false">ต้องทำ</button><button data-filter="done" type="button" aria-pressed="false">เสร็จแล้ว</button></div>
+        <div class="tasks-container" id="task-list" aria-busy="true"></div>
+        <button class="add-day-button" id="add-day-task" type="button" disabled>＋ เพิ่มงานในวันนี้</button>
+        <p class="private-note"><svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></svg> แผนส่วนตัว มองเห็นเฉพาะคุณ</p>
+      </section>
+    </div>
+    <footer class="planner-footer"><span>GoodPlanner / พื้นที่วางแผนของคุณ</span><span>ทำทีละก้าว ไปด้วยกัน</span></footer>
+  </main>
+    </div>
+  </div>
+
+  <dialog id="task-dialog" aria-labelledby="task-dialog-title">
+    <div class="dialog-heading"><div><p class="section-kicker">ให้วันของคุณเป็นรูปเป็นร่าง</p><h2 id="task-dialog-title">เพิ่มงานใหม่</h2></div><button type="button" class="arrow-button" id="close-task" aria-label="ปิดหน้าต่าง">×</button></div>
+    <form id="task-form">
+      <div class="field"><label for="task-title">ชื่องาน <span class="required">*</span></label><input id="task-title" name="title" maxlength="120" placeholder="วันนี้อยากทำอะไรให้สำเร็จ?" required></div>
+      <div class="form-row"><div class="field"><label for="task-date">วันที่ <span class="required">*</span></label><input id="task-date" name="date" type="date" min="1900-01-01" max="2100-12-31" required></div><div class="field"><label for="task-time">เวลา <span class="optional">(ไม่ระบุได้)</span></label><input id="task-time" name="time" type="time"></div></div>
+      <div class="field"><label for="task-priority">ความสำคัญ</label><select id="task-priority" name="priority"><option value="normal">ปกติ</option><option value="high">สำคัญมาก</option><option value="low">ไม่เร่งด่วน</option></select></div>
+      <div class="field"><label for="task-end-time">เวลาสิ้นสุด <span class="optional">(ไม่ระบุได้)</span></label><input id="task-end-time" name="endTime" type="time"><small class="muted">ถ้าเลือกแชร์ช่วงเวลากับกลุ่ม แต่ไม่ระบุเวลาจบ จะนับ 30 นาทีจากเวลาเริ่ม</small></div>
+      <div class="field"><label for="task-notes">รายละเอียด <span class="optional">(ไม่จำเป็น)</span></label><textarea id="task-notes" name="notes" maxlength="2000" rows="3" placeholder="จดสิ่งที่ต้องเตรียม หรือรายละเอียดเล็ก ๆ น้อย ๆ"></textarea></div>
+      <p class="form-error" id="task-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="quiet-button" id="cancel-task">ยกเลิก</button><button type="submit" class="primary-button" id="save-task">บันทึกงาน</button></div>
+    </form>
+  </dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">ลบงานนี้?</h2><p id="delete-description"></p><p class="muted">เมื่อลบแล้วจะเรียกคืนไม่ได้</p><p class="form-error" id="delete-error" role="alert" hidden></p><div class="dialog-actions"><button class="quiet-button" id="cancel-delete" type="button" autofocus>เก็บไว้</button><button class="danger-button" id="confirm-delete" type="button">ลบงาน</button></div></dialog>
+  <template id="task-template"><article class="task-card"><div class="task-main"><input class="task-check" type="checkbox"><div class="task-content"><div class="task-meta"><span class="task-time"></span><span class="priority-badge"></span></div><h3 class="task-title"></h3><p class="task-notes"></p></div></div><div class="task-actions"><button class="edit-task" type="button">แก้ไข</button><button class="delete-task" type="button">ลบ</button></div></article></template>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b78"><title>แผนงานกลุ่ม — GoodPlanner</title>
+  <link rel="stylesheet" href="planner.css"><link rel="stylesheet" href="groups.css"><link rel="stylesheet" href="workspace.css"><script src="groups.js" defer></script>
+  <link rel="stylesheet" href="theme-dark.css">
+  <script src="theme.js"></script>
+</head>
+<body class="workspace-page groups-page">
+  <div class="planner-app">
+    {% include 'partials/workspace-sidebar.html' with active_page='groups' %}
+    <div class="workspace-main">
+      <header class="topbar"><div class="workspace-location"><span data-icon="folder" aria-hidden="true"></span><span>พื้นที่ทำงาน</span><span class="location-slash">/</span><strong>แผนงานกลุ่ม</strong></div><div class="account-area"><span id="workspace-today" class="workspace-today"></span><button class="quiet-button notification-button" id="notifications-button" aria-label="การแจ้งเตือน" type="button"><span data-icon="bell" aria-hidden="true"></span><span class="notification-label">แจ้งเตือน</span><span id="notification-count" hidden></span></button><button class="quiet-button theme-toggle" data-theme-toggle type="button" aria-pressed="false" aria-label="เปลี่ยนเป็นโหมดมืด">☾</button></div></header>
+  <main class="group-shell">
+    <div id="message" class="group-message" role="status" hidden></div>
+    <div id="failure" class="load-error" role="alert" hidden><span id="failure-text"></span><button id="retry" class="quiet-button" type="button">ลองอีกครั้ง</button></div>
+    <section id="group-list-view">
+      <div class="group-page-heading"><div><p class="eyebrow">LET’S PLAN TOGETHER</p><h1>พื้นที่ของ<span>ทุกคนในทีม</span></h1><p class="subtle">แชร์เวลา นัดหมาย แบ่งงาน แล้วไปถึงเป้าหมายด้วยกัน</p></div><button class="primary-button" id="create-group" type="button"><span data-icon="plus" aria-hidden="true"></span>สร้างกลุ่มใหม่</button></div>
+      <div class="overview-strip" aria-label="ภาพรวมกลุ่มของคุณ">
+        <div class="overview-card violet"><span class="overview-icon" data-icon="folder" aria-hidden="true"></span><span>กลุ่มทั้งหมด</span><strong id="group-count">—</strong><small>พื้นที่ทำงานร่วมกัน</small></div>
+        <div class="overview-card cyan"><span class="overview-icon" data-icon="team" aria-hidden="true"></span><span>กลุ่มที่คุณดูแล</span><strong id="owned-count">—</strong><small>คุณเป็นหัวหน้ากลุ่ม</small></div>
+        <div class="overview-card pink"><span class="overview-icon" data-icon="link" aria-hidden="true"></span><span>เข้าร่วมกับเพื่อน</span><strong id="joined-count">—</strong><small>คุณเป็นสมาชิกในทีม</small></div>
+        <div class="overview-card blue"><span class="overview-icon" data-icon="check" aria-hidden="true"></span><span>งานที่เสร็จแล้ว</span><strong id="completed-count">—</strong><small>จากทุกกลุ่มของคุณ</small></div>
+      </div>
+      <div class="group-list-layout"><div class="group-list-main">
+        <div class="list-toolbar"><h2>กลุ่มของคุณ</h2><button class="text-button" id="refresh" type="button"><span data-icon="refresh" aria-hidden="true"></span>อัปเดตข้อมูล</button></div>
+        <div class="list-controls"><div class="group-filters" role="group" aria-label="กรองกลุ่ม"><button data-group-filter="all" aria-pressed="true">ทั้งหมด</button><button data-group-filter="owned" aria-pressed="false">ฉันเป็นเจ้าของ</button><button data-group-filter="joined" aria-pressed="false">ฉันเป็นสมาชิก</button></div><label class="group-search"><span data-icon="search" aria-hidden="true"></span><input id="group-search" type="search" aria-label="ค้นหาชื่อกลุ่ม" placeholder="ค้นหาชื่อกลุ่ม…" autocomplete="off"></label></div>
+        <div class="groups-grid" id="groups-grid" aria-live="polite"><p class="subtle">กำลังโหลดกลุ่มของคุณ…</p></div>
+      </div><aside class="group-list-aside">
+        <section class="join-panel" aria-labelledby="join-title"><div class="join-heading"><span class="join-icon" data-icon="link" aria-hidden="true"></span><div><p class="section-kicker">BETTER TOGETHER</p><h2 id="join-title">มีรหัสจากเพื่อนแล้ว?</h2><p class="subtle">เข้าร่วมทีม แล้วเริ่มวางแผนด้วยกัน</p></div></div><form id="join-form"><label for="join-code">รหัสเข้าร่วมกลุ่ม</label><input id="join-code" name="code" maxlength="10" minlength="10" autocomplete="off" placeholder="รหัสกลุ่ม 10 ตัว" required><button class="primary-button" type="submit">เข้าร่วมกลุ่ม <span data-icon="arrow" aria-hidden="true"></span></button></form></section>
+        <section class="workflow-card"><h2>นัดให้ลงตัวใน 3 ขั้นตอน</h2><ol><li><span>01</span><div><strong>ชวนทีมเข้ากลุ่ม</strong><p>ส่งรหัสให้เพื่อนมาร่วมวางแผน</p></div></li><li><span>02</span><div><strong>แชร์เวลาที่ไม่ว่าง</strong><p>ให้ทุกคนกรอกก่อนวันปิดรับ</p></div></li><li><span>03</span><div><strong>เลือกวัน แล้วเริ่มเลย</strong><p>หัวหน้านัดหมายและแบ่งงานให้ทีม</p></div></li></ol></section>
+      </aside></div>
+    </section>
+    <section id="group-detail-view" hidden>
+      <div class="detail-breadcrumb"><button id="back-groups" class="text-button" type="button">← กลุ่มทั้งหมด</button><button id="refresh-detail" class="text-button" type="button">↻ อัปเดตข้อมูล</button></div>
+      <div class="detail-heading"><div class="detail-title"><span class="detail-symbol" data-icon="team" aria-hidden="true"></span><div><p class="eyebrow" id="group-role">พื้นที่ทำงานร่วมกัน</p><h1 id="group-name"></h1><p class="subtle" id="group-period"></p></div></div><div class="detail-team"><div id="detail-avatars" class="avatar-stack"></div><span>ทีมเดียวกัน เป้าหมายเดียวกัน</span></div></div>
+      <div id="planning-phase" class="planning-phase" role="status"></div>
+      <nav class="detail-tabs" aria-label="ส่วนต่าง ๆ ของกลุ่ม"><button data-tab="info" aria-current="page"><span data-icon="team" aria-hidden="true"></span>ข้อมูลกลุ่ม</button><button data-tab="busy"><span data-icon="clock" aria-hidden="true"></span>เวลาที่ไม่ว่าง</button><button data-tab="calendar"><span data-icon="calendar" aria-hidden="true"></span>ปฏิทินกลุ่ม</button><button data-tab="free"><span data-icon="check" aria-hidden="true"></span>วันนัดของกลุ่ม</button><button data-tab="board"><span data-icon="board" aria-hidden="true"></span>กระดานงาน</button></nav>
+      <section id="panel-info" class="tab-panel"></section>
+      <section id="panel-busy" class="tab-panel" hidden></section>
+      <section id="panel-calendar" class="tab-panel" hidden></section>
+      <section id="panel-free" class="tab-panel" hidden></section>
+      <section id="panel-board" class="tab-panel" hidden></section>
+    </section>
+    <footer class="group-footer"><span>GoodPlanner / พื้นที่วางแผนร่วมกัน</span><span>ทำทีละก้าว ไปด้วยกัน</span></footer>
+  </main>
+    </div>
+  </div>
+
+  <dialog id="group-dialog" aria-labelledby="group-dialog-title"><form id="group-form">
+    <div class="dialog-heading"><div><p class="section-kicker">A NEW BEGINNING</p><h2 id="group-dialog-title">สร้างกลุ่มของเรา</h2></div><button class="arrow-button" type="button" data-close="group-dialog" aria-label="ปิด">×</button></div>
+    <div class="field"><label for="new-group-name">ชื่อกลุ่ม</label><input id="new-group-name" maxlength="100" placeholder="เช่น โปรเจกต์จบ · ทีมออกแบบ" required></div>
+    <div class="form-row"><div class="field"><label for="group-start-date">นัดได้ตั้งแต่วันที่</label><input id="group-start-date" type="date" min="1900-01-01" max="2100-12-31" required></div><div class="field"><label for="group-end-date">ถึงวันที่</label><input id="group-end-date" type="date" min="1900-01-01" max="2100-12-31" required></div></div>
+    <p class="form-hint">เลือกช่วงวันที่ให้หัวหน้าเลือกนัด เช่น 1–7 พฤศจิกายน (ไม่เกิน 366 วัน)</p>
+    <div class="field"><label for="group-duration">ระยะเวลาทำงานต่อครั้ง (นาที)</label><input id="group-duration" type="number" min="30" max="720" step="15" value="180" required><p class="form-hint">เช่น 180 นาที = 3 ชั่วโมง หัวหน้าจะเลือกเวลานัดหลังดูเวลาไม่ว่างของสมาชิก</p></div>
+    <div class="field"><label for="group-deadline">ปิดรับเวลาไม่ว่างเมื่อไหร่</label><input id="group-deadline" type="datetime-local" required><p class="form-hint">เวลาไทย · ต้องก่อนวันแรกที่นัดได้ เช่น ปิดรับ 29 ต.ค. 23:59 เพื่อนัดช่วง 1–7 พ.ย.</p></div>
+    <p class="form-hint">ถึงกำหนดแล้วจะปิดรับสมาชิกและการแก้เวลา หัวหน้าจึงเลือกนัดจากปฏิทินได้</p><p class="form-error" id="group-form-error" role="alert" hidden></p>
+    <div class="dialog-actions"><button class="quiet-button" type="button" data-close="group-dialog">ยกเลิก</button><button class="primary-button" type="submit">สร้างกลุ่ม</button></div>
+  </form></dialog>
+
+  <dialog id="group-task-dialog" aria-labelledby="group-task-dialog-title"><form id="group-task-form">
+    <div class="dialog-heading"><div><p class="section-kicker">ONE TASK AT A TIME</p><h2 id="group-task-dialog-title">มอบหมายงานใหม่</h2></div><button class="arrow-button" type="button" data-close="group-task-dialog" aria-label="ปิด">×</button></div>
+    <div class="field"><label for="group-task-title">ชื่องาน</label><input id="group-task-title" maxlength="120" required></div>
+    <div class="field"><label for="group-task-assignee">ผู้รับผิดชอบ</label><select id="group-task-assignee" required></select></div>
+    <div class="form-row"><div class="field"><label for="group-task-date">กำหนดส่ง</label><input id="group-task-date" type="date" required></div><div class="field"><label for="group-task-time">เวลาส่ง (ไม่ระบุได้)</label><input id="group-task-time" type="time"></div></div>
+    <div class="field"><label for="group-task-notes">รายละเอียด</label><textarea id="group-task-notes" maxlength="2000" rows="3"></textarea></div><p class="form-error" id="group-task-form-error" role="alert" hidden></p>
+    <div class="dialog-actions"><button class="quiet-button" type="button" data-close="group-task-dialog">ยกเลิก</button><button class="primary-button" type="submit">บันทึกงาน</button></div>
+  </form></dialog>
+
+  <dialog id="meeting-dialog" aria-labelledby="meeting-dialog-title"><form id="meeting-form">
+    <div class="dialog-heading"><div><p class="section-kicker">MAKE TIME TOGETHER</p><h2 id="meeting-dialog-title">เลือกวันและเวลานัด</h2></div><button class="arrow-button" type="button" data-close="meeting-dialog" aria-label="ปิด">×</button></div>
+    <div class="field"><label for="meeting-title">เรื่องที่นัดหมาย</label><input id="meeting-title" maxlength="120" placeholder="เช่น ประชุมสรุปงานประจำสัปดาห์" required></div>
+    <div class="field"><label for="meeting-date">วันที่</label><input id="meeting-date" type="date" required></div>
+    <div class="form-row"><div class="field"><label for="meeting-start">เวลาเริ่ม</label><input id="meeting-start" type="time" required></div><div class="field"><label for="meeting-end">เวลาสิ้นสุด</label><input id="meeting-end" type="time" required></div></div>
+    <p id="meeting-duration-note" class="form-hint"></p>
+    <fieldset class="participant-field"><legend>ผู้เข้าร่วม</legend><div id="meeting-participants"></div></fieldset>
+    <div id="meeting-warning" class="meeting-warning" role="status" hidden></div>
+    <label id="meeting-ack-label" class="check-line conflict-ack" hidden><input id="meeting-ack" type="checkbox"><span>ฉันตรวจรายชื่อแล้ว และต้องการนัดเวลานี้ต่อ</span></label>
+    <p class="form-hint">ระบบตรวจเวลาชนอีกครั้งก่อนบันทึก หากเวลาชนหรือมีคนยังไม่ยืนยัน หัวหน้าต้องยืนยันคำเตือนก่อนสร้างนัด</p><p class="form-error" id="meeting-form-error" role="alert" hidden></p>
+    <div class="dialog-actions"><button class="quiet-button" type="button" data-close="meeting-dialog">ยกเลิก</button><button id="meeting-submit" class="primary-button" type="submit">ตรวจสอบและยืนยันนัด</button></div>
+  </form></dialog>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title"><div class="dialog-heading"><h2 id="confirm-title">ยืนยันรายการ</h2></div><p id="confirm-description"></p><p class="form-error" id="confirm-error" role="alert" hidden></p><div class="dialog-actions"><button class="quiet-button" type="button" data-close="confirm-dialog">ยกเลิก</button><button class="danger-button" id="confirm-action" type="button">ยืนยัน</button></div></dialog>
+  <dialog id="notifications-dialog" aria-labelledby="notifications-title"><div class="dialog-heading"><div><p class="section-kicker">YOUR TEAM UPDATES</p><h2 id="notifications-title">การแจ้งเตือน</h2></div><button class="arrow-button" type="button" data-close="notifications-dialog" aria-label="ปิด">×</button></div><div id="notifications-list"></div><div class="dialog-actions"><button class="quiet-button" id="read-notifications" type="button">ทำเครื่องหมายว่าอ่านทั้งหมด</button></div></dialog>
+</body>
+</html>

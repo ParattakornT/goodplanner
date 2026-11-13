@@ -1,0 +1,19 @@
+# Hourly wake-up for email reminders. The site decides what (if anything) to send;
+# repeated calls are safe because every email is recorded once in EmailLog.
+name: email-reminders
+on:
+  schedule:
+    - cron: '7 * * * *'
+  workflow_dispatch:
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call the reminder endpoint
+        env:
+          SITE_URL: ${{ secrets.SITE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          # The free Render instance may be asleep; the first request wakes it.
+          curl -fsS --retry 3 --retry-delay 20 --max-time 120 -X POST \
+            -H "Authorization: Bearer $CRON_SECRET" "$SITE_URL/api/cron/reminders"

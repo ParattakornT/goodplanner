@@ -1,0 +1,94 @@
+/* Shared identity and workspace frame for every GoodPlanner page. */
+:root { color-scheme:light; --ink:#203558; --muted:#61728c; --green:#2868d9; --line:#e3eaf5; --paper:#fff; --navy:#123b78; --violet:#7960db; --cyan:#087c8d; --pink:#b9437d; --canvas:#f0f5ff; font-family:"Leelawadee UI","Noto Sans Thai",Tahoma,sans-serif; background:#d9f0f4; color:var(--ink); -webkit-font-smoothing:antialiased; }
+html { scrollbar-gutter:stable; }
+* { box-sizing:border-box; }
+body { margin:0; }
+[hidden] { display:none!important; }
+.workspace-page { background:#d9f0f4; color:var(--ink); font-size:14px; line-height:1.6; }
+.workspace-page h1,.workspace-page h2,.workspace-page h3,.workspace-page p { margin-top:0; }
+.workspace-page button,.workspace-page input,.workspace-page select,.workspace-page textarea { font-family:inherit; }
+.workspace-page button:disabled { cursor:default; opacity:.48; }
+.workspace-page :is(button,a,input,select,textarea):focus-visible { outline:3px solid #8caef6; outline-offset:3px; }
+.workspace-page svg { width:20px; height:20px; stroke-width:1.7; }
+.workspace-page .primary-button { background:var(--green); color:white; min-height:44px; padding:11px 18px; gap:9px; }
+.workspace-page .primary-button:hover:not(:disabled) { background:#2058bd; }
+.workspace-page .quiet-button { background:white; padding:8px 12px; font-size:13px; border-radius:9px; }
+.workspace-page .quiet-button:hover:not(:disabled) { background:#edf3ff; }
+.workspace-page .brand-icon { display:grid; place-items:center; }
+.workspace-page .sidebar-note-icon { display:inline-flex; align-items:center; justify-content:center; }
+.workspace-page .sidebar-note button:disabled { cursor:default; opacity:.48; }
+
+/* App frame and navigation. The main area stays flexible beside the fixed-width rail. */
+.planner-app { --rail-width:216px; display:grid; grid-template-columns:var(--rail-width) minmax(0,1fr); max-width:1600px; min-height:calc(100vh - 48px); margin:24px auto; width:calc(100% - 48px); background:linear-gradient(90deg,#123b78 0 var(--rail-width),#f0f5ff var(--rail-width) 100%); border:1px solid #fff9; border-radius:24px; box-shadow:0 20px 65px #23558b16; }
+.workspace-sidebar { position:sticky; top:24px; align-self:start; min-height:calc(100vh - 48px); max-height:calc(100vh - 48px); overflow-y:auto; display:flex; flex-direction:column; padding:28px 20px 20px; background:#123b78; border-radius:23px 0 0 23px; color:white; scrollbar-width:thin; scrollbar-color:#3d6297 #123b78; }
+.workspace-page .workspace-sidebar .brand { gap:9px; color:#fff; }
+.workspace-page .workspace-sidebar .brand-icon { width:32px; height:34px; color:#fff; background:#ffffff17; border-radius:9px; }
+.workspace-page .workspace-sidebar .brand-word { font-size:20px; letter-spacing:-.7px; }
+.workspace-page .workspace-sidebar .brand-word>span { color:#fff; }
+.sidebar-account { display:flex; align-items:center; gap:10px; padding:27px 1px; border-bottom:1px solid #ffffff16; margin-bottom:25px; min-width:0; }
+.workspace-page .sidebar-account .avatar { display:grid; width:40px; height:40px; color:#123b78; background:#d5e5ff; border:3px solid #ffffff2b; font-size:15px; }
+.sidebar-account>div { min-width:0; }
+.workspace-page .sidebar-account #account-name { display:block; max-width:123px; font-size:14px; font-weight:600; color:white; }
+.sidebar-account>div>span { display:block; color:#abc4e8; font-size:10px; margin-top:3px; }
+.sidebar-label { color:#83a5d8; font:600 9px 'Segoe UI',sans-serif; letter-spacing:1.8px; margin:0 12px 12px; }
+.workspace-sidebar .workspace-nav { display:flex; order:0; flex-direction:column; width:100%; gap:7px; padding:0; background:none; border:0; border-radius:0; }
+.workspace-sidebar .workspace-nav a { display:flex; align-items:center; gap:11px; padding:13px 12px; font-size:13px; font-weight:500; color:#bbd0ed; border-radius:9px; text-align:left; }
+.workspace-sidebar .workspace-nav a:hover { background:#ffffff0d; color:white; }
+.workspace-sidebar .workspace-nav a[aria-current=page] { background:#2a5593; color:#fff; box-shadow:none; }
+.workspace-sidebar .workspace-nav svg { width:18px; height:18px; }
+.nav-indicator { margin-left:auto; width:5px; height:5px; border-radius:50%; background:#85d8ef; }
+.sidebar-note { margin:42px 0 27px; padding:17px 14px; border:1px solid #ffffff1c; border-radius:13px; background:#ffffff07; }
+.sidebar-note-icon { width:32px; height:32px; border-radius:9px; background:#ffffff12; color:#a8ddf2; margin-bottom:13px; }
+.sidebar-note h2 { font-size:14px; color:white; line-height:1.8; margin:0 0 8px; }
+.sidebar-note p { font-size:11px; line-height:1.9; color:#aac4e8; margin:0 0 16px; }
+.sidebar-note button { display:flex; align-items:center; justify-content:center; gap:6px; width:100%; padding:9px 4px; border:1px solid #ffffff35; background:#ffffff0d; border-radius:8px; color:#fff; font-size:11px; }
+.sidebar-note button:hover { background:#ffffff1f; }
+.sidebar-note button svg { width:15px; height:15px; }
+.workspace-page .workspace-sidebar #logout { display:flex; align-items:center; gap:10px; margin:auto 0 0; padding:12px; background:none; border:0; border-radius:9px; color:#bbd0ed; font-size:12px; }
+.workspace-page .workspace-sidebar #logout:hover { background:#ffffff12; color:#fff; }
+.sidebar-logout svg { width:17px; height:17px; }
+.workspace-main { min-width:0; }
+.workspace-page .topbar { display:flex; flex-wrap:nowrap; justify-content:space-between; height:80px; padding:0 32px; gap:16px; border:0; background:transparent; }
+.workspace-location { display:flex; align-items:center; gap:12px; font-size:12px; color:#8898b0; min-width:0; }
+.workspace-location>span[data-icon] { color:#7695c6; }
+.workspace-location strong { font-weight:600; color:#3e5a83; white-space:nowrap; }
+.location-slash { color:#c1cee1; }
+.workspace-page .topbar .account-area { margin:0; gap:16px; }
+.workspace-today { color:#8393ac; font-size:11px; white-space:nowrap; }
+.workspace-page .notification-button { min-width:39px; min-height:39px; padding:9px; background:#fff; border:1px solid #e4ebf7; border-radius:11px; color:#637da2; }
+.notification-label { display:none; }
+.workspace-page .primary-button { box-shadow:0 4px 10px #2f6dd618; border-radius:9px; font-size:13px; }
+.workspace-page .quiet-button { color:#536d95; border-color:#dce5f4; }
+.workspace-page .arrow-button { background:#fff; border-color:#dce5f4; color:#5e79a2; }
+
+@media(min-width:1500px) { .workspace-page .topbar { padding-left:40px; padding-right:40px; } }
+@media(max-width:1200px) {
+  .planner-app { --rail-width:190px; width:calc(100% - 32px); margin:16px auto; min-height:calc(100vh - 32px); border-radius:20px; }
+  .workspace-sidebar { top:16px; padding:25px 15px 17px; min-height:calc(100vh - 32px); max-height:calc(100vh - 32px); border-radius:19px 0 0 19px; }
+  .workspace-page .workspace-sidebar .brand-word { font-size:18px; }.workspace-page .workspace-sidebar .brand-icon { width:29px; height:31px; }
+  .workspace-page .topbar { padding:0 25px; }.workspace-today { display:none; }
+}
+@media(max-width:980px) {
+  .planner-app { --rail-width:168px; }.workspace-sidebar { padding-left:12px; padding-right:12px; }.workspace-page .workspace-sidebar .brand-word { font-size:16px; }.workspace-page .workspace-sidebar .brand { gap:6px; }.workspace-page .sidebar-account #account-name { max-width:90px; }
+  .workspace-sidebar .workspace-nav a { padding:12px 9px; gap:8px; font-size:12px; }.sidebar-note { padding:15px 11px; }.sidebar-note h2 { font-size:13px; }.workspace-page .topbar { padding:0 22px; height:72px; }
+}
+@media(max-width:700px) {
+  html:has(.workspace-page) { background:var(--canvas); }.workspace-page { background:var(--canvas); }.planner-app { display:block; margin:0; width:100%; border:0; border-radius:0; box-shadow:none; min-height:100vh; background:var(--canvas); }
+  .workspace-sidebar { position:static; min-height:0; max-height:none; border-radius:0; display:grid; grid-template-columns:minmax(0,1fr) auto; padding:17px 20px 13px; gap:17px; overflow:visible; }
+  .workspace-page .workspace-sidebar .brand-word { font-size:21px; }.workspace-page .workspace-sidebar .brand-icon { width:31px; height:33px; }.sidebar-account,.sidebar-note,.sidebar-label { display:none; }
+  .workspace-sidebar .workspace-nav { grid-column:1/-1; grid-row:2; flex-direction:row; gap:8px; }.workspace-sidebar .workspace-nav a { flex:1; justify-content:center; padding:10px 12px; font-size:12px; }.nav-indicator { display:none; }
+  .workspace-page .workspace-sidebar #logout { grid-column:2; grid-row:1; padding:7px 0 7px 7px; margin:0; font-size:11px; gap:6px; }
+  .workspace-page .topbar { height:65px; min-height:0; padding:0 20px; flex-wrap:nowrap; gap:12px; }.workspace-location { gap:8px; font-size:11px; }.workspace-location svg { width:17px; height:17px; }.workspace-page .notification-button { min-height:35px; min-width:35px; padding:7px; }
+}
+@media(max-width:460px) { .workspace-page .topbar { padding:0 16px; }.workspace-sidebar { padding-left:16px; padding-right:16px; }.workspace-location>span[data-icon] { display:none; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { transition:none!important; scroll-behavior:auto!important; } }
+
+
+/* Light and dark mode switch */
+.theme-toggle { font-size:15px; line-height:1; padding:8px 12px; min-width:40px; }
+.auth-page .theme-toggle { position:fixed; top:16px; right:16px; z-index:30; background:#ffffffd9; }
+
+.email-toggle { font-size:13px; padding:8px 12px; text-decoration:none; white-space:nowrap; }
+.email-toggle[aria-pressed="false"] { opacity:.65; }
+@media (max-width: 720px) { .email-toggle { font-size:12px; padding:6px 8px; } }
+.email-toggle[hidden] { display:none; }

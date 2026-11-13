@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123b78">
+  <title>สมัครสมาชิก — GoodPlanner</title>
+  <link rel="stylesheet" href="workspace.css">
+  <link rel="stylesheet" href="login.css">
+  <script src="login.js" defer></script>
+  <link rel="stylesheet" href="theme-dark.css">
+  <script src="theme.js"></script>
+</head>
+<body class="auth-page">
+  <button class="quiet-button theme-toggle" data-theme-toggle type="button" aria-pressed="false" aria-label="เปลี่ยนเป็นโหมดมืด">☾</button>
+  <main class="auth-shell">
+    <div class="auth-layout">
+      {% include 'partials/auth-story.html' %}
+      <section class="auth-card" aria-labelledby="page-title">
+        <p class="auth-eyebrow">START SOMETHING GOOD</p>
+      <div class="intro"><h1 id="page-title">เริ่มต้นวันดี ๆ ด้วยกัน</h1><p>สร้างบัญชีของคุณ แล้วเริ่มวางแผนได้เลย</p></div>
+      <form data-mode="register" novalidate>
+        <div class="field">
+          <label for="displayName">ชื่อที่แสดง</label>
+          <input id="displayName" name="displayName" autocomplete="nickname" maxlength="80" placeholder="เช่น ป่าน" required aria-describedby="displayName-error">
+          <p class="field-error" id="displayName-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="email">อีเมล</label>
+          <input id="email" name="email" type="email" autocomplete="email" autocapitalize="none" spellcheck="false" maxlength="254" placeholder="you@example.com" required aria-describedby="email-error">
+          <p class="field-error" id="email-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="password">รหัสผ่าน</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder="อย่างน้อย 8 ตัวอักษร" required aria-describedby="password-error">
+            <button type="button" class="password-toggle" data-password="password" aria-label="แสดงรหัสผ่าน" aria-pressed="false">แสดง</button>
+          </div>
+          <p class="field-error" id="password-error" aria-live="polite"></p>
+        </div>
+        <div class="field">
+          <label for="confirmPassword">ยืนยันรหัสผ่าน</label>
+          <div class="password-wrap">
+            <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" maxlength="128" placeholder="กรอกรหัสผ่านอีกครั้ง" required aria-describedby="confirmPassword-error">
+            <button type="button" class="password-toggle" data-password="confirmPassword" aria-label="แสดงรหัสผ่าน" aria-pressed="false">แสดง</button>
+          </div>
+          <p class="field-error" id="confirmPassword-error" aria-live="polite"></p>
+        </div>
+        <button type="submit" class="submit-button">สมัครสมาชิก <span aria-hidden="true">→</span></button>
+      </form>
+      <p class="signup-line">มีบัญชีแล้ว? <a class="text-button" href="login.html">เข้าสู่ระบบ</a></p>
+      <div class="notice" id="notice" role="status" tabindex="-1" hidden></div>
+      </section>
+    </div>
+    <footer class="auth-footer">GoodPlanner / พื้นที่ของทุกแผนและทุกเป้าหมาย</footer>
+  </main>
+</body>
+</html>
