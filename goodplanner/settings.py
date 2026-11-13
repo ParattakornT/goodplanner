@@ -95,7 +95,7 @@ if SESSION_COOKIE_SECURE:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 GOOGLE_CLIENT_ID = os.environ.get(
     'GOOGLE_CLIENT_ID',
-    '455815883688-7kc2rqtu1defcfo0qmt2o3rcef09p3rf.apps.googleusercontent.com',
+    '1047176551743-79grbk0b4hukl43cnovh8qlliib372ej.apps.googleusercontent.com',
 )
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
 GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', '')
