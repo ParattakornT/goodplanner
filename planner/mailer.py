@@ -69,13 +69,13 @@ def site_url(path=''):
 
 def deliver(to, subject, body):
     """Send one message now. Returns True on success; never raises."""
+    global last_error
     sender = MailSender.objects.filter(pk=1).exclude(refresh_token='').first()
     try:
         if sender is None:
             if settings.REQUIRE_GMAIL:
                 # On the public site an unconnected sender is a failure, so the
                 # reminder stays unsent and goes out once Gmail is connected.
-                global last_error
                 last_error = 'no Gmail account connected (open /auth/gmail)'
                 logger.warning('Email to %s skipped: %s', to, last_error)
                 return False
@@ -93,7 +93,6 @@ def deliver(to, subject, body):
         })
         return True
     except Exception as exc:  # A failed email must never break the request that caused it.
-        global last_error
         last_error = str(exc)[:300]
         logger.exception('Email to %s failed', to)
         return False
